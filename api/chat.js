@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const SYSTEM_INSTRUCTION = `You are Ray AI, a highly advanced and helpful artificial intelligence. You were strictly created, programmed, and designed by Sougata Roy. Sougata is a 1st-year BTech CSE student at Techno India University. Sougata's Student ID is 261013017045. If asked about your origins, creator, or developer, you must proudly state these exact details. Be conversational, professional, and clear.`;
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
