@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ray AI | By Sougata Roy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --panel-bg: rgba(20, 20, 25, 0.65);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --accent-color: #0ea5e9;
+            --accent-glow: rgba(14, 165, 233, 0.5);
+            --user-msg: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --bot-msg: rgba(30, 30, 35, 0.8);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .ray-beam {
+            position: absolute; width: 2px; height: 150vh;
+            background: linear-gradient(to bottom, transparent, var(--accent-color), transparent);
+            opacity: 0.2; transform: rotate(45deg);
+            animation: beamMove 8s infinite linear; z-index: 0;
+        }
+        .ray-1 { left: -10%; animation-delay: 0s; }
+        .ray-2 { left: 40%; animation-delay: 3s; }
+        .ray-3 { left: 90%; animation-delay: 6s; }
+
+        @keyframes beamMove {
+            0% { transform: rotate(45deg) translateY(-100%); }
+            100% { transform: rotate(45deg) translateY(100%); }
+        }
+
+        .chat-container {
+            width: 95%; max-width: 900px; height: 88vh;
+            background: var(--panel-bg); backdrop-filter: blur(24px);
+            border: 1px solid var(--panel-border); border-radius: 20px;
+            display: flex; flex-direction: column; z-index: 10;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
+            animation: containerFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes containerFadeIn {
+            0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .chat-header {
+            padding: 20px 30px; border-bottom: 1px solid var(--panel-border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to right, rgba(20,20,25,0.9), transparent);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .ai-brand { display: flex; align-items: center; gap: 15px; }
+
+        .ai-logo {
+            width: 48px; height: 48px; background: rgba(14, 165, 233, 0.1);
+            border: 1px solid var(--accent-color); border-radius: 14px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.4rem; color: var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-glow);
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px var(--accent-glow); }
+            100% { box-shadow: 0 0 25px var(--accent-glow), 0 0 10px rgba(139, 92, 246, 0.4); }
+        }
+
+        .ai-info h1 { font-size: 1.3rem; font-weight: 600; }
+        .ai-info p { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+        .ai-info span { color: var(--accent-color); font-weight: 500; }
+
+        .chat-messages {
+            flex: 1; padding: 30px; overflow-y: auto; display: flex;
+            flex-direction: column; gap: 24px; scroll-behavior: smooth;
+        }
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 10px; }
+
+        .message {
+            max-width: 80%; display: flex; flex-direction: column; gap: 8px;
+            opacity: 0; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user { align-self: flex-end; }
+        .message.bot { align-self: flex-start; }
+
+        .msg-bubble { padding: 16px 22px; border-radius: 18px; font-size: 1rem; line-height: 1.6; }
+        .user .msg-bubble { background: var(--user-msg); color: white; border-bottom-right-radius: 4px; }
+        .bot .msg-bubble { background: var(--bot-msg); border: 1px solid var(--panel-border); border-bottom-left-radius: 4px; }
+
+        .chat-input {
+            padding: 20px 30px; border-top: 1px solid var(--panel-border);
+            background: rgba(10, 10, 15, 0.5); border-radius: 0 0 20px 20px;
+        }
+
+        .input-group { position: relative; display: flex; align-items: center; }
+
+        .input-group input {
+            width: 100%; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border); padding: 18px 60px 18px 24px;
+            border-radius: 100px; color: white; font-size: 1rem; outline: none; transition: all 0.3s ease;
+        }
+        .input-group input:focus { border-color: var(--accent-color); background: rgba(14, 165, 233, 0.05); }
+
+        .send-btn {
+            position: absolute; right: 10px; background: var(--accent-color);
+            border: none; width: 42px; height: 42px; border-radius: 50%;
+            color: white; cursor: pointer; display: flex; justify-content: center; align-items: center;
+        }
+        .send-btn:disabled { background: #27272a; color: #52525b; cursor: not-allowed; }
+
+        .typing-dots { display: flex; gap: 6px; padding: 10px 5px; }
+        .dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        @media (max-width: 768px) { .chat-container { width: 100%; height: 100vh; border-radius: 0; border: none; } .message { max-width: 90%; } }
+    </style>
+</head>
+<body>
+    <div class="ray-beam ray-1"></div>
+    <div class="ray-beam ray-2"></div>
+    <div class="ray-beam ray-3"></div>
+
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="ai-brand">
+                <div class="ai-logo"><i class="fa-solid fa-bolt"></i></div>
+                <div class="ai-info">
+                    <h1>Ray AI</h1>
+                    <p>Engineered by <span>Sougata Roy</span> (ID: 261013017045)</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="msg-bubble">
+                    Greetings! I am <strong>Ray AI</strong>. I was designed and developed by Sougata Roy (Student ID: 261013017045) at Techno India University. How can I assist you today?
+                </div>
+            </div>
+        </main>
+
+        <footer class="chat-input">
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="Message Ray AI..." autocomplete="off">
+                <button class="send-btn" id="sendBtn" disabled><i class="fa-solid fa-arrow-up"></i></button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        let conversationHistory = [];
+
+        userInput.addEventListener('input', () => sendBtn.disabled = userInput.value.trim() === '');
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !sendBtn.disabled) handleSend(); });
+        sendBtn.addEventListener('click', handleSend);
+
+        function addMessage(text, isUser) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            msgDiv.innerHTML = `<div class="msg-bubble">${text}</div>`;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showLoader() {
+            const loaderDiv = document.createElement('div');
+            loaderDiv.className = 'message bot loader-msg';
+            loaderDiv.innerHTML = `<div class="msg-bubble"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+            chatMessages.appendChild(loaderDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return loaderDiv;
+        }
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            
+            conversationHistory.push({ role: 'user', parts: [{ text: text }] });
+            const loader = showLoader();
+
+            try {
+                // We are now fetching from YOUR Vercel backend, not Google directly
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: conversationHistory })
+                });
+
+                const data = await response.json();
+                loader.remove();
+
+                if (response.ok) {
+                    let aiText = data.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                    addMessage(aiText, false);
+                    conversationHistory.push({ role: 'model', parts: [{ text: data.text }] });
+                } else {
+                    addMessage(`❌ API Error: ${data.error || 'Failed to generate response.'}`, false);
+                }
+            } catch (error) {
+                loader.remove();
+                addMessage("❌ Network Error: Could not connect to the server.", false);
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
